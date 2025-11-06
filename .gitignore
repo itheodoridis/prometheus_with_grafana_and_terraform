@@ -1,5 +1,5 @@
 ssl/
-grafana/etc/ldap.toml
+#grafana/etc/ldap.toml
 terraform/.terraform/
 terraform/disabled/
 terraform/terraform.tfstate
@@ -10,4 +10,4 @@ terraform/notification_policies.tf
 #docker-compose.yml
 users_export*json
 terraform/
-grafana/etc/
+#grafana/etc/
