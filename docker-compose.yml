@@ -1,0 +1,250 @@
+networks:
+  monitor-net:
+    driver: bridge
+
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
+services:
+  processexporter:
+    image: ncabatoff/process-exporter
+    container_name: processexporter
+    hostname: processexporter_srv-pgslm-01
+    privileged: true
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc
+      - ./process_exporter/:/config/
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    command:
+      - '--procfs=/host/proc'
+      - '-config.path=/config/process-exporter.yml'
+    expose:
+      - 9256
+    ports:
+      - "9256:9256"
+    networks:
+      - monitor-net
+
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    hostname: portainer_srv-pgslm-01
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "9999:9000"
+    networks:
+      - monitor-net
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    hostname: prometheus_srv-pgslm-01
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - ./ssl/ca-chained.cer:/etc/secrets/ca.cer:ro
+      - ./ssl/srv-pgslm-01.cer:/etc/secrets/srv-pgslm-01.cer:ro
+#      - ./ssl/targetcerts/:/etc/secrets/targetcerts/:ro
+      - ./ssl/srv-pgslm-01.nopasswd.key.pem:/etc/secrets/srv-pgslm-01.key:ro
+      - prometheus_data:/prometheus
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.external-url=http://srv-pgslm-01.company.com:9090/'
+      - '--storage.tsdb.retention.time=60d'
+      - '--storage.tsdb.retention.size=25GB'
+      - '--web.enable-lifecycle'
+    expose:
+      - 9090
+    ports:
+      - "9090:9090"
+    networks:
+      - monitor-net
+    depends_on:
+      - cadvisor
+
+  nodeexporter:
+    image: prom/node-exporter:latest
+    container_name: nodeexporter
+    hostname: nodeexporter_srv-pgslm-01
+    user: root
+    privileged: true
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro      
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    expose:
+      - 9100
+    ports:
+      - "9100:9100"
+    networks:
+      - monitor-net
+
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    hostname: alertmanager_srv-pgslm-01
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+      - alertmanager_data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro      
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.listen-address=0.0.0.0:9093'
+      - '--web.external-url=http://srv-pgslm-01.company.com:9093/'
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    networks:
+      - monitor-net
+
+  cadvisor:
+    image: team/cadvisor:v0.49.1
+    container_name: cadvisor
+    hostname: cadvisor_srv-pgslm-01
+    user: root
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro      
+    restart: unless-stopped
+    ports:
+      - 8082:8080
+    networks:
+      - monitor-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana_srv-pgslm-01
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/etc/ldap.toml:/etc/grafana/ldap.toml
+#      - ./grafana/etc/grafana.ini:/etc/grafana/grafana.ini
+      - ./ssl:/etc/grafana/ssl
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-adminpassword}
+      - GF_USERS_ALLOW_SIGN_UP=true
+      - GF_SERVER_ROOT_URL=https://srv-pgslm-01.company.com:3000/
+      - GF_SERVER_PROTOCOL=https
+      - GF_SERVER_DOMAIN=company.com
+      - GF_SERVER_CERT_FILE=/etc/grafana/ssl/srv-pgslm-01.cer
+      - GF_SERVER_CERT_KEY=/etc/grafana/ssl/srv-pgslm-01.nopasswd.key.pem
+      - GF_UNIFIED_ALERTING_ENABLED=true
+      - GF_UNIFIED_ALERTING_EXECUTE_ALERTS=true
+      - GF_USERS_AUTO_ASSIGN_ORG=true
+      - GF_PLUGINS_PLUGIN_ADMIN_ENABLED=true      
+      - GF_AUTH_LDAP_ENABLED=true
+      - GF_AUTH_LDAP_CONFIG_FILE=/etc/grafana/ldap.toml
+      - GF_AUTH_LDAP_ALLOW_SIGN_UP=true
+      - GF_AUTH_LDAP_SKIP_ORG_ROLE_SYNC=true
+      - GF_SMTP_ENABLED=true
+      - GF_SMTP_HOST=mailserver.company.com:587
+      - GF_SMTP_USER=mydomain\smtpuser
+      - GF_SMTP_PASSWORD=smtppassword
+      - GF_SMTP_SKIP_VERIFY=true
+      - GF_SMTP_FROM_ADDRESS=smtpuser@company.com
+      - GF_SMTP_FROM_NAME=GrafPrometheus
+    restart: unless-stopped
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    networks:
+      - monitor-net
+
+  vmware-exporter-dc1:
+    image: pryorda/vmware_exporter:latest
+    container_name: vmware-exporter-dc1
+    hostname: vmware-exporter-dc1_srv-pgslm-01
+    dns_search: company.com
+    domainname: company.com
+    dns:
+      - 10.10.10.10
+      - 10.10.10.11
+    restart: unless-stopped
+    environment:
+      - VSPHERE_HOST=vcenterdc1.company.com
+      - VSPHERE_USER=vmwuser@vsphere.bog
+      - VSPHERE_PASSWORD=vmpassword
+      - VSPHERE_IGNORE_SSL=True
+      - VSPHERE_COLLECT_VMGUESTS=False
+      - VSPHERE_FETCH_ALARMS=True
+      - VSPHERE_FETCH_TAGS=False
+    expose:
+      - 9272
+    ports:
+      - 9275:9272
+    networks:
+      - monitor-net
+
+  vmware-exporter-dc2:
+    image: pryorda/vmware_exporter:latest
+    container_name: vmware-exporter-dc2
+    hostname: vmware-exporter-dc2_srv-pgslm-01
+    dns_search: company.com
+    domainname: company.com
+    dns:
+      - 10.222.60.11
+      - 10.222.61.11
+    restart: unless-stopped
+    environment:
+      - VSPHERE_HOST=vcenterdc2.company.com
+      - VSPHERE_USER=vmwuser@vsphere.bog
+      - VSPHERE_PASSWORD=vmpassword
+      - VSPHERE_IGNORE_SSL=True
+      - VSPHERE_COLLECT_VMGUESTS=False
+      - VSPHERE_FETCH_ALARMS=True
+      - VSPHERE_FETCH_TAGS=False
+    expose:
+      - 9272
+    ports:
+      - 9274:9272
+    networks:
+      - monitor-net
+
+  blackbox:
+    image: quay.io/prometheus/blackbox-exporter:v0.26.0
+    container_name: blackbox
+    hostname: blackbox_srv-pgslm-01
+    dns_search: company.com
+    domainname: company.com
+    restart: unless-stopped
+    cap_add:
+      - NET_RAW
+    volumes:
+      - ./blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    expose:
+      - "9115"
+    ports:
+      - "9115:9115"
+    networks:
+      - monitor-net

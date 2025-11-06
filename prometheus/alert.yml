@@ -1,0 +1,13 @@
+groups:
+  - name: NodeLocalAlerts
+    rules:
+      - alert: LocalInstanceDown
+        expr: up{job="node_local"} < 1
+        #expr: -1
+        for: 1m
+        labels:
+          severity: 'critical'
+          service: 'LocalInstanceDown'
+
+
+

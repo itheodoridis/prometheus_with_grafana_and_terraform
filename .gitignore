@@ -1,0 +1,13 @@
+ssl/
+grafana/etc/ldap.toml
+terraform/.terraform/
+terraform/disabled/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.terraform.lock.hcl
+terraform/variables.tf
+terraform/notification_policies.tf
+#docker-compose.yml
+users_export*json
+terraform/
+grafana/etc/

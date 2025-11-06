@@ -1,0 +1,9 @@
+[
+  { 
+    "targets": [ "server2.company.com","server1.company.com" ],
+    "labels": { 
+        "team": "admins0008",
+        "environment": "prod"
+     }
+  }
+]

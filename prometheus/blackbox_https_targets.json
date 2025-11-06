@@ -1,0 +1,26 @@
+[
+  {
+    "targets": ["https://www.company.com/"],
+    "labels": {
+      "module": "https_text_company",
+      "team": "admins0006",
+      "environment": "prod"
+    }
+  },
+  {
+    "targets": ["https://edition.cnn.com/"],
+    "labels": {
+      "module": "https_text_cnn",
+      "team": "admins0005",
+      "environment": "prod"
+    }
+  },
+  {
+    "targets": ["https://www.federalreserve.gov/"],
+    "labels": {
+      "module": "https_text_federalreserve",
+      "team": "admins0005",
+      "environment": "prod"
+    }
+  }  
+]

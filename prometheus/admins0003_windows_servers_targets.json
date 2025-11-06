@@ -1,0 +1,25 @@
+[
+    {
+        "labels": {
+            "exporter_type": "winexporter",
+            "server_group": "admins0003_db_servers",
+            "team": "admins0003",
+            "environment": "prod"
+        },
+        "targets": [
+            "srv-admins0003-db1:9182",
+            "srv-admins0003-db2:9182"
+        ]
+    },
+    {
+        "labels": {
+            "exporter_type": "winexporter",
+            "server_group": "admins0003_app_servers",
+            "team": "admins0003",
+            "environment": "prod"
+        },
+        "targets": [
+            "srv-admins0003-app:9182"
+        ]
+    }
+]

@@ -1,0 +1,14 @@
+[
+    {
+        "labels": {
+            "exporter_type": "winexporter",
+            "server_group": "0005_windows_servers",
+            "team": "admins0005",
+            "environment": "prod"
+        },
+        "targets": [
+            "srv-0005win-01:9182",
+            "srv-0005win-02:9182"
+        ]
+    }
+]

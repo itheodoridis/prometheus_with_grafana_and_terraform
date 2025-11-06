@@ -1,0 +1,6 @@
+##/process_exporter/config
+
+process_names:
+  - name: "{{.Comm}}"
+    cmdline:
+      - '.+'

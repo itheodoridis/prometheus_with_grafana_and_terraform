@@ -1,0 +1,56 @@
+[
+    {
+        "labels": {
+            "exporter_type": "node",
+            "server_group": "0005_linux_servers",
+            "team": "admins0005",
+            "environment": "prod"
+        },
+        "targets": [
+            "srv-0005linux-03:9100",
+            "srv-0005linux-04:9100",
+            "srv-0005linux-01:9100",
+            "srv-0005linux-02:9100",
+            "srv-0005linux-05:9100",
+            "srv-0005linux-06:9100",
+            "srv-0005linux-07:9100",
+            "srv-0005linux-08:9100"
+        ]
+    },
+    {
+        "labels": {
+            "exporter_type": "process",
+            "server_group": "0005_linux_servers",
+            "team": "admins0005",
+            "environment": "prod"            
+        },
+        "targets": [
+            "srv-0005linux-03:9256",
+            "srv-0005linux-04:9256",
+            "srv-0005linux-01:9256",
+            "srv-0005linux-02:9256",
+            "srv-0005linux-05:9256",
+            "srv-0005linux-06:9256",
+            "srv-0005linux-07:9256",
+            "srv-0005linux-08:9256"            
+        ]
+    },
+    {
+        "labels": {
+            "exporter_type": "cadvisor",
+            "server_group": "0005_linux_servers",
+            "team": "admins0005",
+            "environment": "prod"            
+        },
+        "targets": [
+            "srv-0005linux-03:8082",
+            "srv-0005linux-04:8082",
+            "srv-0005linux-01:8082",
+            "srv-0005linux-02:8082",
+            "srv-0005linux-05:8082",
+            "srv-0005linux-06:8082",
+            "srv-0005linux-07:8082",
+            "srv-0005linux-08:8082"
+        ]
+    }
+]

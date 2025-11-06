@@ -1,0 +1,111 @@
+modules:
+  ##############
+  # DNS checks # 
+  ##############
+  server1.company.com:
+    prober: dns
+    timeout: 4s
+    dns:
+      preferred_ip_protocol: "ip4"
+      transport_protocol: "udp"
+      query_name: "server1.company.com"      # target is the FQDN
+      query_type: "A"
+      valid_rcodes: 
+        - NOERROR
+
+  server2.company.com:
+    prober: dns
+    timeout: 4s
+    dns:
+      preferred_ip_protocol: "ip4"
+      transport_protocol: "udp"
+      query_name: "server2.company.com"      # target is the FQDN
+      query_type: "A"
+      valid_rcodes: 
+        - NOERROR
+
+  ################
+  # HTTP / REST  #
+  ################
+
+  http_api_server1:
+    prober: http
+    timeout: 5s
+
+    http:
+      method: GET
+      valid_status_codes: [200]              
+      preferred_ip_protocol: "ip4"
+      # Skip‑verify if you use an internal / self‑signed cert
+      tls_config:
+        insecure_skip_verify: true           
+
+      # Fail if the JSON body does *not* contain `"MsgSts":"ACCP"`
+      # Regex must be a full Go‑regexp string.
+      fail_if_body_not_matches_regexp:
+        - '"MsgSts"\s*:\s*"ACCP"'            
+
+  ################
+  #  ICMP checks #
+  ################
+
+  icmp_ipv4:
+    prober: icmp
+    timeout: 5s
+    icmp:
+      preferred_ip_protocol: ip4
+
+
+  ##########################
+  # HTTP check for company #
+  ##########################
+  https_text_company:
+    prober: http
+    timeout: 5s
+
+    http:
+      method: GET
+      valid_status_codes: [200]             
+      preferred_ip_protocol: "ip4"
+      follow_redirects: true
+      # Skip‑verify if you use an internal / self‑signed cert
+      tls_config:
+        insecure_skip_verify: false           
+
+      fail_if_body_not_matches_regexp:
+        - 'Update'            
+
+  ######################
+  # HTTP check for cnn #
+  ######################
+  https_text_cnn:
+    prober: http
+    timeout: 5s
+    http:
+      method: GET
+      valid_status_codes: [200]              
+      preferred_ip_protocol: "ip4"
+      follow_redirects: true
+      # Skip‑verify if you use an internal / self‑signed cert
+      tls_config:
+        insecure_skip_verify: true
+
+      fail_if_body_not_matches_regexp:
+        - 'Terms'            
+
+  ##################################
+  # HTTP check for Federal Reserve #
+  ##################################
+  https_text_federalreserve:
+    prober: http
+    timeout: 5s
+    http:
+      method: GET
+      valid_status_codes: [200]              
+      preferred_ip_protocol: "ip4"
+      follow_redirects: true
+      # Skip‑verify if you use an internal / self‑signed cert
+      tls_config:
+        insecure_skip_verify: false
+      fail_if_body_not_matches_regexp:
+        - 'Governors'

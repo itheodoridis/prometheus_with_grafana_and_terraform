@@ -1,0 +1,36 @@
+[
+    {
+        "labels": {
+            "exporter_type": "winexporter",
+            "server_group": "admins0001_servers-group1",
+            "team": "admins0001",
+            "environment": "prod"
+        },
+        "targets": [
+            "srv-admins0001-02:9182"
+        ]
+    },
+    {
+        "labels": {
+            "exporter_type": "winexporter",
+            "server_group": "admins0001_servers-group1",
+            "team": "admins0001",
+            "environment": "test"
+        },
+        "targets": [
+            "srv-admins0001-04:9182"
+        ]
+    },
+    {
+        "labels": {
+            "exporter_type": "winexporter",
+            "server_group": "admins0001_servers-group2",
+            "team": "admins0001",
+            "environment": "prod"
+        },
+        "targets": [
+            "srv-admins0001-03:9182",
+            "srv-admins0001-01:9182"
+        ]
+    }
+]

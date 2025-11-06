@@ -1,0 +1,26 @@
+[
+    {
+        "labels": {
+            "exporter_type": "winexporter",
+            "server_group": "workers1",
+            "team": "admins0011",
+            "environment": "prod"
+        },
+        "targets": [
+            "srv-collect-dc1:9182",
+            "srv-collect-dc2:9182"
+        ]
+    },
+    {
+        "labels": {
+            "exporter_type": "winexporter",
+            "server_group": "workers2",
+            "team": "admins0011",
+            "environment": "prod"
+        },
+        "targets": [
+            "srv-agents-dc1:9182",
+            "srv-agents-dc2:9182"
+        ]
+    }
+]

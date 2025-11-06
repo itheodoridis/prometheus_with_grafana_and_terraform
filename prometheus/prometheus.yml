@@ -1,0 +1,281 @@
+global:
+  scrape_interval: "30s"
+  scrape_timeout: "10s"
+
+rule_files:
+  - "alert.yml"
+
+alerting:
+  alertmanagers:
+    - scheme: http
+      static_configs:
+        - targets: [ 'alertmanager:9093' ]
+
+scrape_configs:
+- job_name: node_local
+  static_configs:
+  - targets: ['nodeexporter:9100']
+    labels:
+      exporter_type: 'node'
+      server_group: 'local'
+      team: 'adminonly'
+      environment: 'prod'
+- job_name: process_local
+  static_configs:
+  - targets: ['processexporter:9256']
+    labels:
+      exporter_type: 'process'
+      server_group: 'local'
+      team: 'adminonly'
+      environment: 'prod'
+- job_name: cadvisor_local
+  scrape_interval: 60s
+  static_configs:
+  - targets: ['cadvisor:8080']
+    labels:
+      exporter_type: 'cadvisor'
+      server_group: 'local'
+      team: 'adminonly'
+      environment: 'prod'
+
+- job_name: vmware_vcenter
+  scrape_interval: 60s
+  static_configs:
+  - targets: ['vmware-exporter-dc1:9272', 'vmware-exporter-dc2:9272']
+- job_name: admins0005_linux_servers
+  scrape_interval: 1m
+  file_sd_configs:
+  - files:
+    - 'admins0005_linux_servers_targets.json'
+- job_name: admins0005_windows_servers
+  scrape_interval: 2m
+  scheme: https
+  basic_auth:
+    username: "prometheus"
+    password: "prometheus_password"
+  tls_config:
+    ca_file: /etc/secrets/ca.cer
+  file_sd_configs:
+  - files:
+    - 'admins0005_windows_servers_targets.json'
+
+- job_name: admins0011_servers
+  scrape_interval: 2m
+  file_sd_configs:
+  - files:
+    - 'admins0011_windows_servers_targets.json'
+- job_name: admins0003_windows_servers_winexporter
+  scrape_interval: 2m
+  file_sd_configs:
+  - files:
+    - 'admins0003_windows_servers_targets.json'
+- job_name: admins0001_windows_servers_winexporter
+  scrape_interval: 2m
+  file_sd_configs:
+  - files:
+    - 'admins0001_windows_servers_targets.json'
+- job_name: admins0004_windows_servers_winexporter
+  scrape_interval: 2m
+  file_sd_configs:
+  - files:
+    - 'admins0004_windows_servers_targets.json'
+- job_name: admins0006_windows_servers_winexporter
+  scrape_interval: 2m
+  file_sd_configs:
+  - files:
+    - 'admins0006_windows_servers_targets.json'
+- job_name: admins0009_windows_servers_winexporter
+  scrape_interval: 2m
+  scheme: https
+  basic_auth:
+    username: "prometheus"
+    password: "prometheus_password"
+  tls_config:
+    ca_file: /etc/secrets/ca.cer  
+  file_sd_configs:
+  - files:
+    - 'admins0009_windows_servers_targets.json'
+
+- job_name: admins0002_linux_servers
+  scrape_interval: 1m
+  scheme: https
+  basic_auth:
+    username: "prometheus"
+    password: "prometheus_password"
+  tls_config:
+    ca_file: /etc/secrets/ca.cer
+  file_sd_configs:
+  - files:
+    - 'admins0002_linux_servers_targets.json'
+
+- job_name: admins0002_applications
+  scrape_interval: 30s
+  scheme: https
+  basic_auth:
+    username: "prometheus"
+    password: "prometheus_password"
+  tls_config:
+    ca_file: /etc/secrets/ca.cer
+  metrics_path: /level1/level2/prometheus
+  file_sd_configs:
+  - files:
+    - 'admins0002_app_targets.json'
+
+- job_name: 'blackbox_dns_admins0008'
+  scrape_interval: 5m
+  metrics_path: /probe
+  static_configs:
+    - targets:
+        - server2.company.com:10.10.10.10
+        - server2.company.com:10.10.10.11
+        - server1.company.com:10.10.10.10
+        - server1.company.com:10.10.10.11        
+      labels:
+        exporter_type: 'blackbox'
+        server_group: 'admins0008_Servers'
+        team: 'admins0008'
+        environment: 'prod'
+  relabel_configs:
+  # Populate fqdn label with fqdn portion of __address__
+  - source_labels: [__address__]
+    regex: (.*):.*$
+    replacement: $1
+    target_label: fqdn
+  # Populate dnsserver label with dns server IP portion of __address__
+  - source_labels: [__address__]
+    regex: .*:(.*)$
+    replacement: $1
+    target_label: dnsserver
+  # Populate instance label with hostname portion of fqdn in __address__
+  - source_labels: [__address__]
+    regex: (^.*)\..*\..*:.*$
+    replacement: $1
+    target_label: instance    
+  # Populate module URL parameter with fqdn portion of __address__
+  # This is a parameter passed to the blackbox exporter
+  - source_labels: [fqdn]
+    target_label: __param_module
+  # Populate target URL parameter with dns server IP
+  - source_labels: [dnsserver]
+    target_label: __param_target
+  # Populate __address__ with the address of the blackbox exporter to hit
+  - target_label: __address__
+    replacement: blackbox:9115
+
+- job_name: 'blackbox_dns_admins0009'
+  scrape_interval: 5m
+  metrics_path: /probe
+  static_configs:
+    - targets:
+        - server4.company.com:10.10.10.10
+        - server4.company.com:10.10.10.11
+      labels:
+        exporter_type: 'blackbox'
+        server_group: 'admins0009_Servers'
+        team: 'admins0009'
+        environment: 'prod'
+  relabel_configs:
+  # Populate fqdn label with fqdn portion of __address__
+  - source_labels: [__address__]
+    regex: (.*):.*$
+    replacement: $1
+    target_label: fqdn
+  # Populate dnsserver label with dns server IP portion of __address__
+  - source_labels: [__address__]
+    regex: .*:(.*)$
+    replacement: $1
+    target_label: dnsserver
+  # Populate instance label with hostname portion of fqdn in __address__
+  - source_labels: [__address__]
+    regex: (^.*)\..*\..*:.*$
+    replacement: $1
+    target_label: instance    
+  # Populate module URL parameter with fqdn portion of __address__
+  # This is a parameter passed to the blackbox exporter
+  - source_labels: [fqdn]
+    target_label: __param_module
+  # Populate target URL parameter with dns server IP
+  - source_labels: [dnsserver]
+    target_label: __param_target
+  # Populate __address__ with the address of the blackbox exporter to hit
+  - target_label: __address__
+    replacement: blackbox:9115
+
+- job_name: 'blackbox_server1_rest_api'
+  scrape_interval: 2m
+  metrics_path: /probe
+  params:
+    module: [http_api_server1]               # use the module above
+  static_configs:
+    - targets:
+        - https://server:1243/level1/api/level2
+      labels:
+        exporter_type: 'blackbox'
+        server_group: 'API_GW_servers'
+        team: 'admins0007'
+        environment: 'prod'
+  relabel_configs:
+    # Send the full URL to Blackbox as the “target” query arg
+    - source_labels: [__address__]
+      target_label: __param_target
+
+    # Preserve the URL as a friendly label
+    - source_labels: [__param_target]
+      target_label: url
+
+    # set the instance label to the hostname portion of the URL
+    - source_labels: [__address__]
+      regex: ^https:\/\/(.*):.*$
+      replacement: $1
+      target_label: instance
+
+    # Final hop: point Prometheus to the Blackbox exporter
+    - target_label: __address__
+      replacement: blackbox:9115
+
+- job_name: "blackbox_icmp"
+  scrape_interval: 2m
+  metrics_path: /probe
+  params:
+    module: ["icmp_ipv4"]               # same for every target
+  file_sd_configs:
+    - files:
+        - 'blackbox_icmp_targets.json'
+      refresh_interval: 1m
+
+  relabel_configs:
+    # pass FQDN/IP as ?target=
+    - source_labels: [__address__]
+      target_label: __param_target
+
+    # nice label for dashboards
+    - source_labels: [__param_target]
+      target_label: instance
+
+    # send probe to exporter
+    - target_label: __address__
+      replacement: blackbox:9115
+
+- job_name: "blackbox_https_texts"
+  scrape_interval: "120s"
+  metrics_path: /probe
+  #params:
+  #  module: ["https_text_contains"]   # same for every target
+  file_sd_configs:
+    - files:
+        - 'blackbox_https_targets.json'
+      refresh_interval: 1m
+
+  relabel_configs:
+    # URL -> ?target=
+    - source_labels: [__address__]
+      target_label: __param_target
+    # per-module
+    - source_labels: [module]
+      target_label: __param_module
+    # nicer label in Prom/Grafana
+    - source_labels: [__param_target]
+      target_label: instance
+    # actually scrape the blackbox exporter
+    - target_label: __address__
+      replacement: blackbox:9115

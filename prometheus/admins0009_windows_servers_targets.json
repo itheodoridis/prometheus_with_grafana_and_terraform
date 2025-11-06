@@ -1,0 +1,14 @@
+[
+    {
+        "labels": {
+            "exporter_type": "winexporter",
+            "server_group": "admins0009-servers",
+            "team": "admins0009",
+            "environment": "prod",
+            "mem": "high"
+        },
+        "targets": [
+            "srv-admins0009-01:9182"
+        ]
+    }
+]

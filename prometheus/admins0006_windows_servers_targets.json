@@ -1,0 +1,44 @@
+[
+    {
+        "labels": {
+            "exporter_type": "winexporter",
+            "server_group": "admins0006-group1",
+            "team": "admins0006",
+            "environment": "prod",
+            "mem": "high"
+        },
+        "targets": [
+            "srv-admins0006-web1:9182",
+            "srv-admins0006-web2:9182",
+            "srv-admins0006-app1:9182"
+        ]
+    },
+    {
+        "labels": {
+            "exporter_type": "winexporter",
+            "server_group": "admins0006-group2",
+            "team": "admins0006",
+            "environment": "prod",
+            "mem": "normal"
+        },
+        "targets": [
+            "srv-admins0006-web1.internal.com:9182",
+            "srv-admins0006-web2.internal.com:9182"
+        ]
+    },
+    {
+        "labels": {
+            "exporter_type": "winexporter",
+            "server_group": "admins0006-group1",
+            "team": "admins0006",
+            "environment": "prod",
+            "mem": "normal"
+        },
+        "targets": [
+            "srv-admins0006-app1.internal.com:9182",
+            "srv-admins0006-app2.internal.com:9182",
+            "srv-admins0006-app1:9182",
+            "srv-admins0006-app2:9182"
+        ]
+    }
+]

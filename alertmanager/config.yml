@@ -1,0 +1,15 @@
+global:
+  smtp_smarthost: 'mailserver.company.com:587'
+  smtp_from: 'smtpuser@company.com'
+  smtp_auth_username: 'mydomain\smtpuser'
+  smtp_auth_password: 'smtppassword'
+  smtp_hello: "srv-pgslm-01"
+  smtp_require_tls: true
+route:
+  group_by: ['alertname','exporter_type','server_group','service','team','severity']
+  group_wait: 30s
+  group_interval: 5m
+  receiver: 'blackhole'
+  repeat_interval: 15m
+receivers:
+  - name: 'blackhole'
