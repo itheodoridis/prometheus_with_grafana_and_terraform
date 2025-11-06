@@ -1,0 +1,48 @@
+[
+    {
+        "id": 41,
+        "uid": "ceue5uje6gow0d",
+        "name": "Zagoreos Admin",
+        "login": "admin1",
+        "email": "admin1@localhost",
+        "avatarUrl": "/avatar/78b81202e45228e41427daa2884c31cc",
+        "isAdmin": true,
+        "isDisabled": false,
+        "isProvisioned": false,
+        "lastSeenAt": "2025-09-18T09:25:37+03:00",
+        "lastSeenAtAge": "1 day",
+        "authLabels": []
+    },
+    {
+        "id": 44,
+        "uid": "beup12d1dnp4wa",
+        "name": "name1 lastname1",
+        "login": "username1",
+        "email": "username1@company.com",
+        "avatarUrl": "/avatar/2661e2daa4c808a7f56d1375faa332b1",
+        "isAdmin": false,
+        "isDisabled": false,
+        "isProvisioned": false,
+        "lastSeenAt": "2025-08-26T10:40:26+03:00",
+        "lastSeenAtAge": "24 days",
+        "authLabels": [
+            "LDAP"
+        ]
+    },
+    {
+        "id": 52,
+        "uid": "aeup12eooqwowd",
+        "name": "name2 lastname2",
+        "login": "username2",
+        "email": "username2@company.com",
+        "avatarUrl": "/avatar/cbfb323b71539905a6ca8f0326ae22de",
+        "isAdmin": false,
+        "isDisabled": false,
+        "isProvisioned": false,
+        "lastSeenAt": "2025-08-26T10:49:40+03:00",
+        "lastSeenAtAge": "24 days",
+        "authLabels": [
+            "LDAP"
+        ]
+    }
+]
