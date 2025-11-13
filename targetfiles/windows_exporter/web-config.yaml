@@ -1,0 +1,5 @@
+tls_server_config:
+  cert_file: node_certificate.crt
+  key_file: node_certificate.key
+basic_auth_users:  
+  prometheus: lalalalalhashed

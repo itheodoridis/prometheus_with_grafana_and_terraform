@@ -3,8 +3,10 @@ networks:
     driver: bridge
 
 volumes:
-    prometheus_data: {}
-    grafana_data: {}
+  prometheus_data: {}
+  grafana_data: {}
+  portainer_data:
+    name: portainer_data
 
 services:
   processexporter:
@@ -29,7 +31,7 @@ services:
       - monitor-net
 
   portainer:
-    image: portainer/portainer
+    image: portainer/portainer-ce:lts
     container_name: portainer
     hostname: portainer_srv-pgslm-01
     restart: unless-stopped
@@ -37,8 +39,17 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+      - ./ssl/srv-pgslm-01.crt:/certs/srv-pgslm-01.crt:ro
+      - ./ssl/srv-pgslm-01.key:/certs/srv-pgslm-01.key:ro
+      - portainer_data:/data
+    command:
+      - '--tlsverify'
+      - '--tlscert' 
+      - '/certs/srv-pgslm-01.crt'
+      - '--tlskey'
+      - '/certs/srv-pgslm-01.key'                
     ports:
-      - "9999:9000"
+      - "9443:9443"
     networks:
       - monitor-net
 
@@ -51,7 +62,6 @@ services:
       - ./prometheus/:/etc/prometheus/
       - ./ssl/ca-chained.cer:/etc/secrets/ca.cer:ro
       - ./ssl/srv-pgslm-01.cer:/etc/secrets/srv-pgslm-01.cer:ro
-#      - ./ssl/targetcerts/:/etc/secrets/targetcerts/:ro
       - ./ssl/srv-pgslm-01.nopasswd.key.pem:/etc/secrets/srv-pgslm-01.key:ro
       - prometheus_data:/prometheus
       - /etc/timezone:/etc/timezone:ro

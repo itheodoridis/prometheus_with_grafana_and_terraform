@@ -1,0 +1,2 @@
+collectors:
+  enabled: os,cs,cpu,cpu_info,logical_disk,physical_disk,net,service,system,scheduled_task,textfile,terminal_services,memory,process,time,vmware
