@@ -129,7 +129,7 @@ services:
       - monitor-net
 
   cadvisor:
-    image: team/cadvisor:v0.49.1
+    image: team/cadvisor:v0.53.0
     container_name: cadvisor
     hostname: cadvisor_srv-pgslm-01
     user: root

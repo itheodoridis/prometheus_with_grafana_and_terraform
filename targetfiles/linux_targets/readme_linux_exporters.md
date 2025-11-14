@@ -60,9 +60,9 @@ Host and OS metrics for your target, with the extra ability to also host custom 
 ### CAdvisor
 Container metrics for every container running on the target docker host. This container image by google is normally hosted on the Google Artifact repository and normally the image would be 
 ```bash
-gcr.io/cadvisor/cadvisor:v0.49.1
+gcr.io/cadvisor/cadvisor:v0.53.0
 ```
-In our case we have no access to that artifact repository from within the enterprise due to security reasons so we serve this locally and the image is already installed and tagged appropriately, that's why it's referenced as team/cadvisor:v0.49.1
+In our case we have no access to that artifact repository from within the enterprise due to security reasons so we serve this locally and the image is already installed and tagged appropriately, that's why it's referenced as team/cadvisor:v0.53.0
 
 ### Portainer
 Portainer has no connection to the Prometheus and Grafana project. It's a sidecar container intended to allow management of the docker container and images on the docker host via a graphical UI. Upon first launch an admin user is created and basic configuration options are selected.
