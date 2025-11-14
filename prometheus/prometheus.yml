@@ -44,6 +44,12 @@ scrape_configs:
   - targets: ['vmware-exporter-dc1:9272', 'vmware-exporter-dc2:9272']
 - job_name: admins0005_linux_servers
   scrape_interval: 1m
+  scheme: https
+  basic_auth:
+    username: "prometheus"
+    password: "prometheus_password"
+  tls_config:
+    ca_file: /etc/secrets/ca.cer  
   file_sd_configs:
   - files:
     - 'admins0005_linux_servers_targets.json'
