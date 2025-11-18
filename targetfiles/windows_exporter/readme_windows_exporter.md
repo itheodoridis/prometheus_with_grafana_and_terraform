@@ -16,7 +16,7 @@ Currently (November 2025):
 
 I have used the msi installers extensively. I advise using Powershell in Administrator Mode and running the following line:
 
-msiexec /i \<source path and filec\> ENABLED_COLLECTORS=[defaults],cpu_info,cs,logon,memory,process,time,vmware --% EXTRA_FLAGS="--web.config.file=""C:\Program Files\windows_exporter\web-config.yaml"""
+msiexec /i \<source path and file\> ENABLED_COLLECTORS=[defaults],cpu_info,cs,logon,memory,process,time,vmware --% EXTRA_FLAGS="--web.config.file=""C:\Program Files\windows_exporter\web-config.yaml"""
 
 ## Prerequisites
 
